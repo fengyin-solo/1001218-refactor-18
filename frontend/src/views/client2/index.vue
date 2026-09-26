@@ -31,13 +31,17 @@
       <thead>
         <tr>
           <th v-for="column in columns" :key="column">{{ column }}</th>
-          <th>可执行动作</th>
+          <th>操作</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" :key="String(row.id)">
-          <td v-for="column in columns" :key="column">{{ row[column] ?? '—' }}</td>
+          <td v-for="column in columns" :key="column">
+            <span v-if="column === '接单结论'" :class="decisionClass(row['接单结论'])">{{ row[column] }}</span>
+            <template v-else>{{ row[column] ?? '—' }}</template>
+          </td>
           <td class="row-actions">
+            <RouterLink class="link" type="button" :to="`/client2/${row.id}`">详情</RouterLink>
             <button
               v-for="action in actions"
               :key="action"
@@ -67,13 +71,20 @@ import { onMounted, ref } from 'vue'
 
 import { request } from '@/api/client'
 
-type Row = Record<string, string | number | null>
+type Row = Record<string, string | number | boolean | null>
 
 const ENDPOINT = '/api/client2'
-const columns = ["委托方编号", "委托方名称", "企业类别", "信用等级", "签约日期", "合同期限", "对接联系人", "委托方状态"]
+// 接单结论不在前端计算：列里展示的是后端共用评估挂上来的同一份结果。
+const columns = ["委托方编号", "委托方名称", "企业类别", "信用等级", "签约日期", "合同期限", "对接联系人", "委托方状态", "接单结论"]
 const actions = ["签订合约", "续约", "终止合作"]
 const statuses = ["潜在客户", "合作中", "合同到期", "已终止"]
 const stats = [{"label": "潜在客户数", "value": 0}, {"label": "合作中客户", "value": 0}, {"label": "到期客户", "value": 0}]
+
+function decisionClass(decision: unknown): string {
+  if (decision === '可接单') return 'tag tag-ok'
+  if (decision === '暂缓接单') return 'tag tag-hold'
+  return 'tag tag-block'
+}
 
 const rows = ref<Row[]>([])
 const total = ref(0)

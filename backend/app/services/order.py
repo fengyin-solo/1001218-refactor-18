@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.services.client_eligibility import DECISION_ACCEPT, assess_client
 from app.store import store
 
 MODULE = "order"
@@ -33,10 +34,14 @@ class OrderService:
     def get_entry(self, entry_id: int) -> dict[str, Any] | None:
         return store.find(MODULE, entry_id)
 
-    def create_entry(self, values: dict[str, Any]) -> tuple[dict[str, Any] | None, list[str]]:
+    def create_entry(self, values: dict[str, Any]) -> tuple[dict[str, Any] | None, list[str], str | None]:
         missing = [field for field in REQUIRED_FIELDS if not str(values.get(field) or "").strip()]
         if missing:
-            return None, missing
+            return None, missing, None
+        # 下单校验与档案列表、委托方详情共用同一份接单结论，这里不再各写一遍。
+        result = assess_client(str(values.get("委托方") or "").strip())
+        if result["接单结论"] != DECISION_ACCEPT:
+            return None, [], f"委托方当前不能接单：{result['判定原因']}"
         rows = store.rows(MODULE)
         entry = {"id": max((int(row.get("id", 0)) for row in rows), default=0) + 1}
         entry.update({field: values.get(field) for field in REQUIRED_FIELDS})
@@ -44,7 +49,7 @@ class OrderService:
         entry["pending"] = True
         entry["abnormal"] = False
         rows.append(entry)
-        return entry, []
+        return entry, [], None
 
     def run_action(self, entry_id: int, action: str) -> tuple[dict[str, Any] | None, str]:
         entry = store.find(MODULE, entry_id)

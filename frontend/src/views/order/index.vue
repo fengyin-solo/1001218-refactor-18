@@ -27,6 +27,22 @@
       <button class="btn ghost" type="button" @click="resetFilters">重置条件</button>
     </form>
 
+    <form class="create-bar" @submit.prevent="submitOrder">
+      <label class="filter-item">
+        <span>委托编号</span>
+        <input v-model="form['委托编号']" placeholder="如 ORDE-2026-001" />
+      </label>
+      <label class="filter-item">
+        <span>委托方编号</span>
+        <input v-model="form['委托方']" placeholder="填写委托方编号，下单时统一校验接单资格" />
+      </label>
+      <label class="filter-item">
+        <span>起运地址</span>
+        <input v-model="form['起运地址']" placeholder="起运地址" />
+      </label>
+      <button class="btn primary" type="submit">登记运输委托单</button>
+    </form>
+
     <table class="data-table">
       <thead>
         <tr>
@@ -80,6 +96,26 @@ const total = ref(0)
 const errorMessage = ref('')
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
+// 下单只提交委托方编号；能不能接单由后端用与档案列表、详情相同的口径判定。
+const form = ref<Record<string, string>>({ '委托编号': '', '委托方': '', '起运地址': '' })
+
+async function submitOrder() {
+  errorMessage.value = ''
+  try {
+    const response = await request(ENDPOINT, {
+      method: 'POST',
+      body: JSON.stringify({ values: { ...form.value } }),
+    })
+    const payload = await response.json()
+    if (!response.ok || !payload.ok) {
+      throw new Error(payload?.message ?? '运输委托单登记失败')
+    }
+    form.value = { '委托编号': '', '委托方': '', '起运地址': '' }
+    await reload()
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : '运输委托单登记失败'
+  }
+}
 
 function resetFilters() {
   filters.value = {}
@@ -91,7 +127,8 @@ function exportRows() {
 }
 
 function openCreate() {
-  errorMessage.value = '运输委托单登记入口尚未接入审批流'
+  form.value['委托编号'] = ''
+  errorMessage.value = ''
 }
 
 async function runAction(action: string, row: Row) {

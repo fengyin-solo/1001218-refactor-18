@@ -16,6 +16,7 @@ const Route = () => import('@/views/route/index.vue')
 const Sensor = () => import('@/views/sensor/index.vue')
 const Cost = () => import('@/views/cost/index.vue')
 const Client2 = () => import('@/views/client2/index.vue')
+const Client2Detail = () => import('@/views/client2/detail.vue')
 const Checkin = () => import('@/views/checkin/index.vue')
 const Accident = () => import('@/views/accident/index.vue')
 const Roadcheck = () => import('@/views/roadcheck/index.vue')
@@ -41,6 +42,7 @@ const router = createRouter({
     { path: '/sensor', name: 'sensor', component: Sensor },
     { path: '/cost', name: 'cost', component: Cost },
     { path: '/client2', name: 'client2', component: Client2 },
+    { path: '/client2/:id', name: 'client2-detail', component: Client2Detail },
     { path: '/checkin', name: 'checkin', component: Checkin },
     { path: '/accident', name: 'accident', component: Accident },
     { path: '/roadcheck', name: 'roadcheck', component: Roadcheck },

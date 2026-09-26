@@ -33,3 +33,16 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .link { border: none; background: none; color: var(--brand); cursor: pointer; padding: 0; }
 .page-foot { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--muted); }
 .error-text { color: #b42318; }
+.create-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 12px; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+.tag-ok { background: #e7f6ec; color: #157f3b; }
+.tag-hold { background: #fdf3e0; color: #b25e09; }
+.tag-block { background: #fdeceb; color: #b42318; }
+.detail-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.decision-row { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); }
+.decision-label { color: var(--muted); font-size: 13px; }
+.decision-reason { color: var(--muted); font-size: 13px; }
+.detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; margin: 0; }
+.detail-item { margin: 0; }
+.detail-item dt { font-size: 12px; color: var(--muted); }
+.detail-item dd { margin: 2px 0 0; font-size: 14px; }

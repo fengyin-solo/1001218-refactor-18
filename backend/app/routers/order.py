@@ -41,10 +41,12 @@ def get_entry(entry_id: int) -> dict:
 
 @router.post("", response_model=ActionResult)
 def create_entry(payload: EntryPayload) -> ActionResult:
-    """登记一条运输委托单，缺字段时说明原因而不是静默丢弃。"""
-    entry, missing = service.create_entry(payload.values)
+    """登记一条运输委托单，缺字段或委托方不具备接单资格时说明原因。"""
+    entry, missing, reason = service.create_entry(payload.values)
     if missing:
         return ActionResult(ok=False, message=f"缺少必填字段：{'、'.join(missing)}")
+    if entry is None:
+        return ActionResult(ok=False, message=reason or "委托方当前不可接单")
     return ActionResult(ok=True, message="运输委托单已登记", entry=entry)
 
 

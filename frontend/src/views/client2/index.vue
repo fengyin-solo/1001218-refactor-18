@@ -70,7 +70,7 @@ import { request } from '@/api/client'
 type Row = Record<string, string | number | null>
 
 const ENDPOINT = '/api/client2'
-const columns = ["委托方编号", "委托方名称", "企业类别", "信用等级", "签约日期", "合同期限", "对接联系人", "委托方状态"]
+const columns = ["委托方编号", "委托方名称", "企业类别", "信用等级", "签约日期", "合同期限", "对接联系人", "委托方状态", "接单资格"]
 const actions = ["签订合约", "续约", "终止合作"]
 const statuses = ["潜在客户", "合作中", "合同到期", "已终止"]
 const stats = [{"label": "潜在客户数", "value": 0}, {"label": "合作中客户", "value": 0}, {"label": "到期客户", "value": 0}]
